@@ -34,6 +34,7 @@ class Tuman(CoreModel):
 
     nom = models.CharField(max_length=255)
     turi = models.CharField(max_length=20, choices=TURI)
+    viloyat = models.ForeignKey(Viloyat, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Tuman'
@@ -51,4 +52,4 @@ class Fakultet(CoreModel):
         verbose_name_plural = 'Fakultetlar'
 
     def __str__(self):
-        return self.name
+        return self.nom

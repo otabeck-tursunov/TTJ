@@ -28,4 +28,11 @@ class Joy(CoreModel):
         return f"{self.xona.raqam}: {self.raqam}"
 
 
+class Jihoz(CoreModel):
+    nom = models.CharField(max_length=255)
+    soni = models.PositiveSmallIntegerField()
+    xona = models.ForeignKey(Xona, on_delete=models.CASCADE)
+    izoh = models.TextField(blank=True)
 
+    def __str__(self):
+        return f"{self.nom}: {self}"
