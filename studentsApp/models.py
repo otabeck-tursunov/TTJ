@@ -34,13 +34,14 @@ class Student(CoreModel):
     familiya = models.CharField(max_length=255)
     otasi = models.CharField(max_length=255, blank=True, null=True)
     jins = models.CharField(max_length=10, choices=JINS)
+    imtiyozli = models.BooleanField(default=False)
     telefon_shaxsiy = models.CharField(max_length=13)
     telefon_qoshimcha = models.CharField(max_length=13, blank=True, null=True)
-    guruh = models.CharField(max_length=10)
+    guruh = models.ForeignKey(Guruh, on_delete=models.SET_NULL, null=True, blank=True)
     tuman = models.ForeignKey(Tuman, on_delete=models.SET_NULL, null=True)
     manzil = models.CharField(max_length=255)
     talim_turi = models.CharField(max_length=255, choices=TALIM_TURI)
-    joy = models.ForeignKey(Joy, on_delete=models.SET_NULL, null=True)
+    joy = models.ForeignKey(Joy, on_delete=models.SET_NULL, null=True, blank=True)
     balans = models.FloatField(default=0)
 
     class Meta:
