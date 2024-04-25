@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from .models import *
 from .serializers import *
 
+
 class StudentsAPIView(APIView):
     # permission_classes = [IsAuthenticated]
     @swagger_auto_schema(
@@ -18,27 +19,27 @@ class StudentsAPIView(APIView):
                 type=openapi.TYPE_STRING
             ),
             openapi.Parameter(
-                name='gender',
+                name='jins',
                 in_=openapi.IN_QUERY,
-                description="Filter by Jins",
-                type=openapi.TYPE_STRING
+                description="Filter by Jins. True - Male; False - Female",
+                type=openapi.TYPE_BOOLEAN
             ),
             openapi.Parameter(
-                name='course',
+                name='kurs',
                 in_=openapi.IN_QUERY,
                 description="Filter by Kurs",
                 type=openapi.TYPE_STRING
             ),
             openapi.Parameter(
-                name='region',
+                name='viloyat_id',
                 in_=openapi.IN_QUERY,
-                description="Filter by Viloyat ID, nom",
+                description="Filter by Viloyat ID",
                 type=openapi.TYPE_STRING
             ),
             openapi.Parameter(
-                name='city',
+                name='tuman_id',
                 in_=openapi.IN_QUERY,
-                description="Filter by Tuman",
+                description="Filter by Tuman ID",
                 type=openapi.TYPE_STRING
             ),
             openapi.Parameter(
@@ -48,48 +49,51 @@ class StudentsAPIView(APIView):
                 type=openapi.TYPE_BOOLEAN
             ),
             openapi.Parameter(
-                name='faculty',
+                name='faculty_id',
                 in_=openapi.IN_QUERY,
-                description="Filter by Fakultet",
+                description="Filter by Fakultet ID",
                 type=openapi.TYPE_STRING
             ),
             openapi.Parameter(
-                name='tutor',
+                name='tutor_id',
                 in_=openapi.IN_QUERY,
-                description="Filter by Tutor",
+                description="Filter by Tutor ID",
                 type=openapi.TYPE_STRING
             ),
         ]
     )
     def get(self, request):
         group = request.query_params.get('group')
-        gender = request.query_params.get('jins')
-        course = request.query_params.get('course')
-        region = request.query_params.get('region')
-        city = request.query_params.get('city')
+        jins = request.query_params.get('jins')
+        kurs = request.query_params.get('kurs')
+        tuman_id = request.query_params.get('tuman_id')
+        viloyat_id = request.query_params.get('viloyat_id')
         qarzdor = request.query_params.get('qarzdor')
-        faculty = request.query_params.get('faculty')
-        tutor = request.query_params.get('tutor')
-        students = Student.objects.all()
-        if group is not None:
-            students = students.filter(guruh__id=group) if group.isdigit() else students.filter(guruh__nom__contains=group)
-        if gender is not None:
-            students = students.filter(jins=gender)
-        if course is not None:
-            students = students.filter(guruh__kurs=course)
-        if region is not None:
-            students = students.filter(tuman__region__id=region) | students.filter(tuman__viloyat__nom=region)
-        if city is not None:
-            students = students.filter(tuman=city)
-        if qarzdor is not None:
-            students = students.filter(balans__lt=0) if qarzdor == True else students.filter(balans__gt=0)
-        if faculty is not None:
-            students = students.filter(guruh__fakultet=faculty)
-        if tutor is not None:
-            students = students.filter(guruh__tutor__id=tutor)
-        data = []
-        for student in students:
-            student_data = StudentSerializer(student).data
-            data.append(student_data)
-        return Response(data, status=status.HTTP_200_OK)
+        faculty_id = request.query_params.get('faculty_id')
+        tutor_id = request.query_params.get('tutor_id')
 
+        students = Student.objects.all()
+
+        if group is not None:
+            students = students.filter(guruh__id=group) if group.isdigit() else students.filter(
+                guruh__nom__contains=group)
+        if jins is not None:
+            if jins == "true":
+                students = students.filter(jins="erkak")
+            elif jins == "false":
+                students = students.filter(jins="ayol")
+        if kurs is not None:
+            students = students.filter(guruh__kurs=kurs)
+        if tuman_id is not None:
+            students = students.filter(tuman__id=tuman_id)
+        if viloyat_id is not None:
+            students = students.filter(tuman__viloyat__id=viloyat_id)
+        if qarzdor is not None:
+            students = students.filter(balans__lt=0) if qarzdor == True else students.filter(balans__gte=0)
+        if faculty_id is not None:
+            students = students.filter(guruh__fakultet__id=faculty_id)
+        if tutor_id is not None:
+            students = students.filter(guruh__tutor__id=tutor_id)
+
+        serializer = StudentSerializer(students, many=True)
+        return Response(serializer.data)

@@ -20,4 +20,6 @@ urlpatterns = [
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('users/', include("userApp.urls")),
     path('students/', include("studentsApp.urls")),
+    path('main/', include("mainApp.urls")),
+    path('xonalar/', include("roomsApp.urls")),
 ]

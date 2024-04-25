@@ -5,7 +5,7 @@ from django.db import models
 class Profil(AbstractUser):
     ROLES = (
         ('admin', 'admin'),
-        ('oddiy', 'oddiy'),
+        ('xodim', 'xodim'),
         ('nazoratchi', 'nazoratchi'),
     )
 
